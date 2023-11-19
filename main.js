@@ -1,18 +1,26 @@
 const { app, BrowserWindow } = require('electron')
 
-function createWindow() {
-  // 创建浏览器窗口
-  let win = new BrowserWindow({
+const createWindow = () => {
+  const win = new BrowserWindow({
     width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true
-    }
+    height: 600
   })
 
-  // 加载 index.html 文件
   win.loadFile('index.html')
 }
 
-// 在 Electron 应用程序准备就绪时创建窗口
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow()
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+})
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
